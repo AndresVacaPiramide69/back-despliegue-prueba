@@ -1,16 +1,16 @@
 import express, { Request, Response } from 'express';
+import { postSuma, getSumas } from './suma_sql';
 
 const router = express.Router();
-const sumas = [];
 router.post('/suma', async (req: Request, res: Response) => {
 
     try {
         const { a, b } = req.body;
 
-        if (!a || !b || isNaN(a) || isNaN(b))
+        if (!a || !b)
             throw new Error('Faltan datos o son incorrectos')
-        const suma = parseInt(a + b);
-        sumas.push(suma);
+        const suma = await postSuma(Number(a), Number(b))
+        console.log(suma)
         res.status(200).send({ resultado: suma })
 
     } catch (error) {
@@ -19,7 +19,7 @@ router.post('/suma', async (req: Request, res: Response) => {
 });
 
 router.get('/', async(req:Request, res:Response) => {
-    res.status(200).send({sumas : sumas})
+    res.status(200).send({sumas : await getSumas()})
 });
 
 export { router as routerOperacion };
